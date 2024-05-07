@@ -1,0 +1,54 @@
+name: MLOps Workflow File
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  lint:
+    name: Code Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Lint code
+        run: make lint
+
+  test:
+    name: Unit Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: make test
+
+  docker_build:
+    name: Docker Image Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: make docker-build
+        env:
+          DOCKER_USERNAME: ${{ secrets.anszeshan07 }}
+          DOCKER_PASSWORD: ${{ secrets.Ans123Alishba }}
+
+  docker_push:
+    name: Docker Image Push
+    runs-on: ubuntu-latest
+    needs: docker_build
+    steps:
+      - name: Push Docker image to Docker Hub
+        run: make docker-push
+        env:
+          DOCKER_USERNAME: ${{ secrets.anszeshan07 }}
+          DOCKER_PASSWORD: ${{ secrets.Ans123Alishba }}
